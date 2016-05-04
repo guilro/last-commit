@@ -1,0 +1,9 @@
+{
+  "repositories" : [
+    "https://git.framasoft.org/codegouv/open-software-base-yaml",
+    "https://git.framasoft.org/codegouv/appstream-debian-to-yaml"
+  ],
+  "tokens": {
+    "git.framasoft.org": "your_gitlab_account_private_token"
+  }
+}
