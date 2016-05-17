@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const moment = require('moment');
 const morgan = require('morgan');
 const url = require('url');
 const wrap = require('co-express');
@@ -18,8 +17,6 @@ app.enable('trust proxy');
 if (app.get('env') === 'development') {
   app.use(morgan('dev'));
 }
-
-app.locals.moment = moment;
 
 app.use('/', express.static('static'));
 
