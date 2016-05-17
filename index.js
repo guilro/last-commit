@@ -1,5 +1,6 @@
 'use strict';
 
+const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const url = require('url');
@@ -18,7 +19,41 @@ if (app.get('env') === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use(bodyParser.json());
+
 app.use('/', express.static('static'));
+
+app.post('/api/repository', wrap(function * (req, res) {
+  if (!req.body.url) {
+    return res.status(400).send();
+  }
+
+  var repoUrl = req.body.url;
+
+  var lastCommit;
+  switch (url.parse(repoUrl).host) {
+    case 'github.com':
+    case 'www.github.com':
+      lastCommit = yield repo.github(repoUrl);
+      break;
+    default:
+      lastCommit = yield repo.gitlab(repoUrl);
+  }
+
+  if (lastCommit) {
+    config.repositories.push(repoUrl);
+
+    return res.status(202).send({
+      url: {
+        host: url.parse(repoUrl).host,
+        path: url.parse(repoUrl).pathname
+      },
+      lastCommit
+    });
+  }
+
+  return res.status(204).send();
+}));
 
 app.get('/api/repositories', wrap(function * (req, res) {
   if (config.repositories.length === 0) {
