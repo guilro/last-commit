@@ -4,9 +4,10 @@ const express = require('express');
 const moment = require('moment');
 const morgan = require('morgan');
 const path = require('path');
-const request = require('request-promise');
 const url = require('url');
 const wrap = require('co-express');
+
+const repo = require('./lib/repository');
 
 var app = express();
 
@@ -55,30 +56,22 @@ app.get('/', wrap(function * (req, res) {
   }
 
   var responses = yield (config.repositories
-    .map(repoUrl => url.parse(repoUrl))
-    .map(repoUrl => ({
-      id: encodeURIComponent(repoUrl.pathname.slice(1)),
-      host: `${repoUrl.protocol}//${repoUrl.host}`,
-      token: config.tokens[repoUrl.host]
-    }))
-    .map(({id, host, token}) => ({
-      url: `${host}/api/v3/projects/${id}/repository/commits`,
-      token
-    }))
-    .map(({url, token}) => request({
-      url,
-      headers: {
-        'Accept': 'application/json',
-        'Private-token': token
+    .map(repoUrl => {
+      switch (url.parse(repoUrl).host) {
+        case 'github.com':
+        case 'www.github.com':
+          return repo.github(repoUrl);
+        default:
+          return repo.gitlab(repoUrl);
       }
-    })));
+    }));
 
-  lastCommits = responses.map((body, index) => ({
+  lastCommits = responses.map((response, index) => ({
     url: {
       host: url.parse(config.repositories[index]).host,
       path: url.parse(config.repositories[index]).pathname
     },
-    lastCommit: JSON.parse(body)[0]
+    lastCommit: response
   }));
   putInCache('lastCommits', lastCommits);
 

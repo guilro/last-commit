@@ -24,7 +24,7 @@ head
           th Last commit
           th Message
           th Author
-        for repository in lastCommits
+        for repository in lastCommits.filter(repository => (repository.lastCommit.message !== 'not found'))
           tr
             td
               span.text-muted #{repository.url.host}/
@@ -36,3 +36,6 @@ head
             td.
               #{repository.lastCommit.author_name} <br/>
               &lt;#{repository.lastCommit.author_email}&gt;
+      .col-md-12
+        for repository in lastCommits.filter(repository => (repository.lastCommit.message == 'not found'))
+          | Error on #{repository.url.host}#{repository.url.path} <br>
