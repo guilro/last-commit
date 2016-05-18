@@ -83,6 +83,7 @@ app.get('/api/repositories', wrap(function * (req, res) {
 
   var lastCommits = responses.map((response, index) => ({
     url: {
+      complete: config.repositories[index],
       host: url.parse(config.repositories[index]).host,
       path: url.parse(config.repositories[index]).pathname
     },
