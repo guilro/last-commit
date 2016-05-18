@@ -23,6 +23,16 @@ app.use(bodyParser.json());
 
 app.use('/', express.static('static'));
 
+app.delete('/api/repository/:key', wrap(function * (req, res) {
+  if (config.repositories[req.params.key]) {
+    config.repositories.splice(req.params.key, 1);
+
+    return res.status(202).json({});
+  }
+
+  return res.status(404).send();
+}));
+
 app.post('/api/repository', wrap(function * (req, res) {
   if (!req.body.url) {
     return res.status(400).send();
