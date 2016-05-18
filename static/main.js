@@ -5,6 +5,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const $ = require('jquery');
 
+var pathname = window.location.pathname;
+
 var Repository = React.createClass({
   render: function() {
     return (
@@ -43,14 +45,14 @@ var RepositoryForm = React.createClass({
     e.preventDefault();
     $.ajax({
       method: 'POST',
-      url: '/api/repository',
+      url: '/list' + pathname + '/repository',
       data: JSON.stringify({url: this.state.url}),
       success: data => {
         console.log(data);
         this.props.onNewRepo(data);
       },
       error: function(xhr, status, err) {
-        console.error('POST', '/api/repository', err.toString());
+        console.error('POST', '/list' + pathname + '/repository', err.toString());
       },
       dataType: 'json',
       contentType: 'application/json'
@@ -87,13 +89,13 @@ var RepositoryTable = React.createClass({
   },
   componentDidMount: function() {
     $.ajax({
-      url: '/api/repositories',
+      url: '/list' + pathname + '/repositories',
       dataType: 'json',
       success: data => {
         this.setState({data: data});
       },
       error: function(xhr, status, err) {
-        console.error('GET', '/api/repositories', err.toString());
+        console.error('GET', '/list' + pathname + '/repositories', err.toString());
       }
     });
   },
@@ -105,10 +107,10 @@ var RepositoryTable = React.createClass({
   handleRemoveRepo: function(key) {
     $.ajax({
       method: 'DELETE',
-      url: '/api/repository/' + key,
+      url: '/list' + pathname + '/repository/' + key,
       data: JSON.stringify({url: this.state.url}),
       error: (xhr, status, err) => {
-        console.error('DELETE', '/api/repository/' + key,
+        console.error('DELETE', '/list' + pathname + '/repository/' + key,
           status, err.toString());
       },
       dataType: 'json',
