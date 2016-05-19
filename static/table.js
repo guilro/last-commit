@@ -81,7 +81,7 @@ var RepositoryForm = React.createClass({
   },
   render: function() {
     return (
-      <form className="repoForm form-horizontal" onSubmit={this.handleSubmit}>
+      <form className="repoForm" onSubmit={this.handleSubmit}>
         <div className="form-group">
           <label className="sr-only" for="repoUrl">
             Github or Gitlab project URL
