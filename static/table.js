@@ -1,4 +1,5 @@
 /* eslint-env browser */
+'use strict';
 
 const moment = require('moment');
 const React = require('react');
