@@ -11,25 +11,28 @@ var CreationForm = React.createClass({
       c += Math.random().toString(36).substr(2, 1);
     }
 
-    return {id: c};
+    return {id: c, valid: true};
   },
   handleIdChange: function(e) {
-    this.setState({id: e.target.value});
+    var valid = (/^[a-zA-Z0-9_]{1,500}$/).test(e.target.value);
+    this.setState({id: e.target.value, valid});
   },
   handleSubmit: function(e) {
     e.preventDefault();
-    window.location.href = '/' + this.state.id;
+    if (this.state.valid) {
+      window.location.href = '/' + this.state.id;
+    }
   },
   render: function() {
     return (
-      <form className="navbar-form navbar-right" role="search"
-        onSubmit={this.handleSubmit}>
+      <form className="navbar-form navbar-right" onSubmit={this.handleSubmit}>
         <div className="form-group">
           <div className="input-group">
             <input type="text" className="form-control" value={this.state.id}
               onChange={this.handleIdChange}/>
             <span className="input-group-btn">
-              <button type="submit" className="btn btn-default">
+              <button type="submit" className="btn btn-default"
+                disabled={!this.state.valid}>
                 Create my list
               </button>
             </span>
