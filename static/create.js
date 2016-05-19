@@ -27,9 +27,16 @@ var CreationForm = React.createClass({
     return (
       <form className="navbar-form navbar-right" onSubmit={this.handleSubmit}>
         <div className="form-group">
+          <label className="sr-only" for="newListId">
+            Create a list with a custom ID
+          </label>
           <div className="input-group">
+            <span className="input-group-addon">
+              {window.location.origin}/
+            </span>
             <input type="text" className="form-control" value={this.state.id}
-              onChange={this.handleIdChange}/>
+              onChange={this.handleIdChange}
+              id="newListId" />
             <span className="input-group-btn">
               <button type="submit" className="btn btn-default"
                 disabled={!this.state.valid}>
