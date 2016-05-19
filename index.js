@@ -44,7 +44,7 @@ app.use('/list/:id', wrap(function * (req, res, next) {
 }), require('./routes/repositories'));
 
 app.get(/^\/[a-zA-Z0-9_]{1,500}$/, wrap(function * (req, res) {
-  return res.sendFile(path.join(__dirname, 'static/index.html'));
+  return res.sendFile(path.join(__dirname, 'static/app.html'));
 }));
 
 app.use('/app', express.static('static'));
