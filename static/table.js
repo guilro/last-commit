@@ -173,6 +173,11 @@ var RepositoryTable = React.createClass({
 
     return (
       <div className="repositories">
+        <p className="text-center">
+          This is your personal list. Anyone with the link to this page
+          can view and edit it.
+        </p>
+        <hr />
         <div className="table-responsive">
           <table className="table">
             <thead>
