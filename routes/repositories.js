@@ -40,6 +40,7 @@ app.post('/repository', wrap(function * (req, res) {
 
     return res.status(202).send({
       url: {
+        complete: repoUrl,
         host: url.parse(repoUrl).host,
         path: url.parse(repoUrl).pathname
       },
@@ -52,7 +53,7 @@ app.post('/repository', wrap(function * (req, res) {
 
 app.get('/repositories', wrap(function * (req, res) {
   if (req.repositories.length === 0) {
-    return res.send('no repository');
+    return res.json([]);
   }
 
   var responses = yield (req.repositories
