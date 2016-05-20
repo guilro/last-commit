@@ -12,7 +12,7 @@ app.delete('/repository/:key', wrap(function * (req, res) {
   if (req.repositories[req.params.key]) {
     req.repositories.splice(req.params.key, 1);
 
-    return res.status(202).json({});
+    return res.status(204).json({});
   }
 
   return res.status(404).send();
@@ -38,7 +38,7 @@ app.post('/repository', wrap(function * (req, res) {
   if (lastCommit) {
     req.repositories.push(repoUrl);
 
-    return res.status(202).send({
+    return res.status(201).send({
       url: {
         complete: repoUrl,
         host: url.parse(repoUrl).host,
