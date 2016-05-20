@@ -26,7 +26,9 @@ var Repository = React.createClass({
     return (
       <tr>
         <td>
-          <span class="text-muted">{this.props.repository.url.host}/</span><a href={this.props.repository.url.complete}><b>{this.props.repository.url.path.slice(1)}</b></a>
+          <span class="text-muted">{this.props.repository.url.host}/</span><a
+           href={this.props.repository.url.complete}
+           target="_blank"><b>{this.props.repository.url.path.slice(1)}</b></a>
         </td>
         <td>
           {moment(this.props.repository.lastCommit.createdAt).fromNow()} <br/>
