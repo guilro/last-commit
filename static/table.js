@@ -74,8 +74,9 @@ var RepositoryForm = React.createClass({
       success: data => {
         this.props.onNewRepo(data, key);
       },
-      error: function(xhr, status, err) {
+      error: (xhr, status, err) => {
         console.error('POST', '/list' + pathname + '/repository', err.toString());
+        this.props.onNewRepo(null, key);
       },
       dataType: 'json',
       contentType: 'application/json'
@@ -126,6 +127,8 @@ var RepositoryTable = React.createClass({
     var data = this.state.data;
     if (typeof key === 'undefined') {
       data.push(repo);
+    } else if (repo === null) {
+      delete data[key];
     } else {
       data[key] = repo;
     }
