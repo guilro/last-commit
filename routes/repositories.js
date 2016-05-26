@@ -25,27 +25,12 @@ app.post('/repository', wrap(function * (req, res) {
 
   var repoUrl = req.body.url;
 
-  var lastCommit;
-  switch (url.parse(repoUrl).host) {
-    case 'github.com':
-    case 'www.github.com':
-      lastCommit = yield repo.github(repoUrl);
-      break;
-    default:
-      lastCommit = yield repo.gitlab(repoUrl);
-  }
+  var lastCommit = yield repo.get(repoUrl);
 
   if (lastCommit) {
     req.repositories.push(repoUrl);
 
-    return res.status(201).send({
-      url: {
-        complete: repoUrl,
-        host: url.parse(repoUrl).host,
-        path: url.parse(repoUrl).pathname
-      },
-      lastCommit
-    });
+    return res.status(201).send(lastCommit);
   }
 
   return res.status(204).send();
@@ -56,27 +41,9 @@ app.get('/repositories', wrap(function * (req, res) {
     return res.json([]);
   }
 
-  var responses = yield (req.repositories
-    .map(repoUrl => {
-      switch (url.parse(repoUrl).host) {
-        case 'github.com':
-        case 'www.github.com':
-          return repo.github(repoUrl);
-        default:
-          return repo.gitlab(repoUrl);
-      }
-    }));
+  var responses = yield req.repositories.map(repoUrl => repo.get(repoUrl));
 
-  var lastCommits = responses.map((response, index) => ({
-    url: {
-      complete: req.repositories[index],
-      host: url.parse(req.repositories[index]).host,
-      path: url.parse(req.repositories[index]).pathname
-    },
-    lastCommit: response
-  }));
-
-  res.json(lastCommits);
+  res.json(responses);
 }));
 
 module.exports = app;

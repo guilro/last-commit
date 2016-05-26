@@ -35,10 +35,10 @@ app.get('/status', wrap(function * (req, res) {
 var datastore = {};
 app.use('/list/:id', wrap(function * (req, res, next) {
   if (typeof datastore[req.params.id] === 'undefined') {
-    datastore[req.params.id] = [];
+    datastore[req.params.id] = {repositories: []};
   }
 
-  req.repositories = datastore[req.params.id];
+  req.repositories = datastore[req.params.id].repositories;
 
   return next();
 }), require('./routes/repositories'));
