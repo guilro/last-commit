@@ -51,10 +51,29 @@ app.use('/list/:id', wrap(function * (req, res, next) {
   return next();
 }), require('./routes/repositories'));
 
+// Serving the static HTML only page
 app.get(/^\/[a-zA-Z0-9_]{1,500}$/, wrap(function * (req, res) {
   return res.sendFile(path.join(__dirname, 'static/app.html'));
 }));
 
+// Serving JS and CSS
 app.use('/app', express.static('static'));
+
+// Error handler
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+
+  if (err.status === 500 || !err.status) {
+    return res.status(500).send({
+      status: 500,
+      message: 'Something broke!'
+    });
+  }
+
+  return res.status(err.status).send({
+    status: err.status,
+    message: err.message
+  });
+});
 
 app.listen(process.env.PORT || 3000);
