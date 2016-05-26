@@ -1,17 +1,38 @@
 'use strict';
 
 const express = require('express');
-const url = require('url');
 const wrap = require('co-express');
 
 const repo = require('../lib/repository');
 
 var app = express.Router();
 
-app.delete('/repository/:key', wrap(function * (req, res) {
-  if (req.repositories[req.params.key]) {
-    req.repositories.splice(req.params.key, 1);
+app.get('/repositories', wrap(function * (req, res) {
+  if (req.list.repositories.length === 0) {
+    return res.json([]);
+  }
 
+  var responses = yield req.list.repositories.map(repoUrl => repo.get(repoUrl));
+
+  res.json(responses);
+}));
+
+// Below are methods which should not be accessed if request is readonly
+app.use('/', wrap(function * (req, res, next) {
+  if (req.readOnly) {
+    var e = new Error('Not authorized.');
+    e.status = 403;
+    throw e;
+  }
+
+  return next();
+}));
+
+app.delete('/repository/:key', wrap(function * (req, res) {
+  if (req.list.repositories[req.params.key]) {
+    req.list.repositories.splice(req.params.key, 1);
+
+    yield req.saveList();
     return res.status(204).json({});
   }
 
@@ -28,22 +49,13 @@ app.post('/repository', wrap(function * (req, res) {
   var lastCommit = yield repo.get(repoUrl);
 
   if (lastCommit) {
-    req.repositories.push(repoUrl);
+    req.list.repositories.push(repoUrl);
 
+    yield req.saveList();
     return res.status(201).send(lastCommit);
   }
 
   return res.status(204).send();
-}));
-
-app.get('/repositories', wrap(function * (req, res) {
-  if (req.repositories.length === 0) {
-    return res.json([]);
-  }
-
-  var responses = yield req.repositories.map(repoUrl => repo.get(repoUrl));
-
-  res.json(responses);
 }));
 
 module.exports = app;

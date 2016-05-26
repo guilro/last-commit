@@ -8,6 +8,7 @@ const request = require('request-promise');
 const wrap = require('co-express');
 
 const config = require('./config');
+const datastore = require('./lib/datastore');
 
 var app = express();
 
@@ -34,11 +35,18 @@ app.get('/status', wrap(function * (req, res) {
 
 var datastore = {};
 app.use('/list/:id', wrap(function * (req, res, next) {
-  if (typeof datastore[req.params.id] === 'undefined') {
-    datastore[req.params.id] = {repositories: []};
+  var list = yield datastore.get(req.params.id);
+
+  if (req.params.id === list.publicUrl) {
+    req.readOnly = true;
   }
 
-  req.repositories = datastore[req.params.id].repositories;
+  req.list = list;
+  var id = req.params.id;
+
+  req.saveList = function() {
+    return datastore.put(id, list);
+  };
 
   return next();
 }), require('./routes/repositories'));
