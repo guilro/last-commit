@@ -6,5 +6,6 @@
     "clientId": "yourClientId",
     "clientSecret": "yourClientSecret",
     "userAgent": "yourGithubPseudo"
-  }
+  },
+  "redisPrefix": "last-commit"
 }
