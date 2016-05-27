@@ -87,6 +87,12 @@ var RepositoryForm = React.createClass({
       error: (xhr, status, err) => {
         console.error('POST', '/list' + pathname + '/repository',
           err.toString());
+          $.notify({
+            title: 'Error: ',
+            message: 'could not add repository.'
+          }, {
+            type: 'danger'
+          });
         this.props.onNewRepo(null, key);
       },
       dataType: 'json',
@@ -143,6 +149,12 @@ var RepositoryTable = React.createClass({
       error: (xhr, status, err) => {
         console.error('DELETE', '/list' + pathname + '/repository/' + key,
           status, err.toString());
+          $.notify({
+            title: 'Error',
+            message: 'Could not delete repository.'
+          }, {
+            type: 'danger'
+          });
       },
       dataType: 'json',
       contentType: 'application/json'

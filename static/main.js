@@ -1,6 +1,7 @@
 /* eslint-env browser */
 'use strict';
 
+require('bootstrap-notify');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const $ = require('jquery');
@@ -42,7 +43,6 @@ var ListApp = React.createClass({
       url: '/list' + this.props.id + '/repositories',
       dataType: 'json',
       success: (data, status, xhr) => {
-        console.log('state', typeof xhr.getResponseHeader('x-public-id'));
         this.setState({
           data: data,
           loading: false,
@@ -53,6 +53,12 @@ var ListApp = React.createClass({
       error: function(xhr, status, err) {
         console.error('GET', '/list' + this.props.id + '/repositories',
           err.toString());
+        $.notify({
+          title: 'Error:',
+          message: err.toString()
+        }, {
+          type: 'danger'
+        });
       }
     });
   }

@@ -9,7 +9,6 @@ var pathname = window.location.pathname;
 
 var PublicUrlForm = React.createClass({
   getInitialState: function() {
-    console.log('prop', this.props.initialId);
     return {
       id: this.props.initialId || '',
       valid: this.props.initialId ? 'success' : 'unkown'
@@ -28,10 +27,22 @@ var PublicUrlForm = React.createClass({
       data: JSON.stringify({publicId}),
       success: () => {
         this.setState({id: this.state.id, valid: 'success'});
+        var url = `${window.location.origin}/${this.state.id}`;
+        $.notify({
+          message: `Public URL correctly set to <a href="${url}" ' +
+            'target="_blank">${url}</a>.`
+        }, {
+          type: 'default'
+        });
       },
       error: (xhr, status, err) => {
         console.error('PATCH', '/list' + pathname, err.toString());
         this.setState({id: this.state.id, valid: 'error'});
+        $.notify({
+          message: xhr.responseJSON.message || err.toString()
+        }, {
+          type: 'danger'
+        });
       },
       dataType: 'json',
       contentType: 'application/json'
