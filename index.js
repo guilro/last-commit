@@ -49,9 +49,9 @@ app.patch('/list/:id', wrap(function * (req, res) {
     return res.status(400).send();
   }
 
-  var list = yield datastore.setPublicId(req.params.id, req.body.publicId);
+  yield datastore.setPublicId(req.params.id, req.body.publicId);
 
-  return res.json(list);
+  return res.status(200).send({status: 200, message: 'OK'});
 }));
 
 app.get('/list/:id', wrap(function * (req, res) {
