@@ -33,12 +33,38 @@ app.get('/status', wrap(function * (req, res) {
   });
 }));
 
-var datastore = {};
+app.patch('/list/:id', wrap(function * (req, res) {
+  if (typeof req.body.publicId === 'undefined') {
+    return res.status(400).send();
+  }
+
+  var list = yield datastore.setPublicId(req.params.id, req.body.publicId);
+
+  return res.json(list);
+}));
+
+app.get('/list/:id', wrap(function * (req, res) {
+  var list = yield datastore.get(req.params.id);
+
+  if (req.params.id === list.publicId) {
+    req.readOnly = true;
+    res.set('x-readonly', 'true');
+  }
+
+  return res.json(yield datastore.get(req.params.id));
+}));
+
+// Base for all the /repositor(ies|y) routes
 app.use('/list/:id', wrap(function * (req, res, next) {
   var list = yield datastore.get(req.params.id);
 
-  if (req.params.id === list.publicUrl) {
+  if (req.params.id === list.publicId) {
     req.readOnly = true;
+    res.set('x-readonly', 'true');
+  }
+
+  if (typeof list.publicId !== 'undefined') {
+    res.set('x-public-id', list.publicId);
   }
 
   req.list = list;

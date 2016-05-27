@@ -15,14 +15,27 @@ var Repository = React.createClass({
       return (
         <tr>
           <td>
-            <span class="text-muted">{this.props.repository.url.host}/</span><a href={this.props.repository.url.complete}><b>{this.props.repository.url.path.slice(1)}</b></a>
+            <span class="text-muted">{this.props.repository.url.host}/</span><a
+            href={this.props.repository.url.complete}
+            ><b>{this.props.repository.url.path.slice(1)}</b></a>
           </td>
           <td colSpan="4">
             Loading...
           </td>
         </tr>
-      )
+      );
     }
+
+    var lastColumn = '';
+    if (this.props.deletable) {
+      lastColumn = (
+        <a href="#" onClick={this.props.onRemove}>
+          <span className="sr-only">Remove</span>
+          <span className="glyphicon glyphicon-remove-circle"></span>
+        </a>
+      );
+    }
+
     return (
       <tr>
         <td>
@@ -40,10 +53,7 @@ var Repository = React.createClass({
           &lt;{this.props.repository.lastCommit.authorEmail}&gt;
         </td>
         <td>
-          <a href="#" onClick={this.props.onRemove}>
-            <span className="sr-only">Remove</span>
-            <span className="glyphicon glyphicon-remove-circle"></span>
-          </a>
+          {lastColumn}
         </td>
       </tr>
     );
@@ -75,7 +85,8 @@ var RepositoryForm = React.createClass({
         this.props.onNewRepo(data, key);
       },
       error: (xhr, status, err) => {
-        console.error('POST', '/list' + pathname + '/repository', err.toString());
+        console.error('POST', '/list' + pathname + '/repository',
+          err.toString());
         this.props.onNewRepo(null, key);
       },
       dataType: 'json',
@@ -109,19 +120,7 @@ var RepositoryForm = React.createClass({
 
 var RepositoryTable = React.createClass({
   getInitialState: function() {
-    return {data: [], loading: true};
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: '/list' + pathname + '/repositories',
-      dataType: 'json',
-      success: data => {
-        this.setState({data: data, loading: false});
-      },
-      error: function(xhr, status, err) {
-        console.error('GET', '/list' + pathname + '/repositories', err.toString());
-      }
-    });
+    return {data: [], loading: true, editable: false};
   },
   handleNewRepo: function(repo, key) {
     var data = this.state.data;
@@ -132,7 +131,7 @@ var RepositoryTable = React.createClass({
     } else {
       data[key] = repo;
     }
-    this.setState({data: data, loading: false});
+    this.setState({data: data, loading: false, editable: this.state.editable});
 
     return data.length - 1;
   },
@@ -150,7 +149,16 @@ var RepositoryTable = React.createClass({
     });
     var data = this.state.data;
     data.splice(key, 1);
-    this.setState({data: data, loading: false});
+    this.setState({data: data, loading: false, editable: this.state.editable});
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if (this.state.loading && !nextProps.loading) {
+      this.setState({
+        data: nextProps.data,
+        editable: nextProps.editable,
+        loading: false
+      });
+    }
   },
   render: function() {
     var tableLines;
@@ -163,24 +171,33 @@ var RepositoryTable = React.createClass({
 
         return (
           <Repository key={key} repository={repo}
-            onRemove={onRemove} />
+            onRemove={onRemove} deletable={this.state.editable} />
         );
       });
     } else {
       tableLines = (
         <tr>
           <td colSpan="5" className="text-center">
-            {this.state.loading ? 'Loading...' : 'No repository. Use the form below to add one !'}
+            {this.state.loading ? 'Loading...' :
+              'No repository. Use the form below to add one !'}
           </td>
         </tr>
       );
     }
 
+    var headerText = (<br />);
+    if (!this.state.loading) {
+      headerText = this.state.editable ?
+        'This is your personal list. Anyone with the link to this page ' +
+        'can view and edit it.' :
+        'This is a read-only list. Please use the original link in ' +
+        'order to edit it';
+    }
+
     return (
       <div className="repositories">
         <p className="text-center">
-          This is your personal list. Anyone with the link to this page
-          can view and edit it.
+          {headerText}
         </p>
         <hr />
         <div className="table-responsive">
@@ -199,13 +216,11 @@ var RepositoryTable = React.createClass({
             </tbody>
           </table>
         </div>
-        <RepositoryForm onNewRepo={this.handleNewRepo} />
+        {this.state.editable ?
+          (<RepositoryForm onNewRepo={this.handleNewRepo} />) : ''}
       </div>
     );
   }
 });
 
-ReactDOM.render(
-  <RepositoryTable />,
-  document.getElementById('app')
-);
+module.exports = RepositoryTable;
