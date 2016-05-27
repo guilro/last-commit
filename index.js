@@ -33,6 +33,17 @@ app.get('/status', wrap(function * (req, res) {
   });
 }));
 
+app.param('id', wrap(function * (req, res, next, id) {
+  if (!(/^[a-zA-Z0-9_]{1,500}$/).test(id)) {
+    res.status(404).send({
+      status: 404,
+      message: 'Not Found'
+    });
+  }
+
+  return next();
+}));
+
 app.patch('/list/:id', wrap(function * (req, res) {
   if (typeof req.body.publicId === 'undefined') {
     return res.status(400).send();
