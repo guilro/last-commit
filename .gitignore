@@ -36,4 +36,4 @@ node_modules
 config.json
 
 # Compiled front javascript
-*.dist.js
+*.dist.js*
