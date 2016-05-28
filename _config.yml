@@ -1,0 +1,10 @@
+source: site
+destination: static
+keep_files:
+  - bundle.dist.js
+  - bundle.dist.js.map
+  - create.js
+  - main.js
+  - public.js
+  - table.js  
+safe: true
