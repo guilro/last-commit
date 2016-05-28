@@ -21,6 +21,14 @@ if (app.get('env') === 'development') {
 
 app.use(bodyParser.json());
 
+// Serving JS and CSS
+app.use('/', express.static('static'));
+
+// Serving the static HTML only page
+app.get(/^\/[a-zA-Z0-9_]{1,500}$/, wrap(function * (req, res) {
+  return res.sendFile(path.join(__dirname, 'static/app.html'));
+}));
+
 app.get('/status', wrap(function * (req, res) {
   return res.send({
     github: JSON.parse(yield request({
@@ -87,14 +95,6 @@ app.use('/list/:id', wrap(function * (req, res, next) {
 
   return next();
 }), require('./routes/repositories'));
-
-// Serving the static HTML only page
-app.get(/^\/[a-zA-Z0-9_]{1,500}$/, wrap(function * (req, res) {
-  return res.sendFile(path.join(__dirname, 'static/app.html'));
-}));
-
-// Serving JS and CSS
-app.use('/app', express.static('static'));
 
 // Error handler
 app.use(function(err, req, res, next) {
