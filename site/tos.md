@@ -1,7 +1,7 @@
 ---
 layout: text
 ---
-#### Lastcomm.it Terms of Service ("Agreement")
+### Lastcomm.it Terms of Service ("Agreement")
 
 Hi, I'm [@guilro](https://github.com/guilro). This agreement was last modified on May 28, 2016.
 
