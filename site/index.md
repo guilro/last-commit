@@ -12,7 +12,7 @@ Lastcomm.it is a tool to check last commit date of a list of GitHub repositories
 
 Lastcomm.it is free software, and code can be found on [GitHub](https://github.com/guilro/last-commit).
 
-## Futur plans
+## Future plans
 
 * display badges present in README.md files (such as travis-ci, code coverage, etc.)
 * expand support for GitLab
