@@ -10,6 +10,8 @@ Lastcomm.it is a tool to check last commit date of a list of GitHub repositories
 * Use your secret URL to edit your list later.
 * Set a custom public URL which will display your list in read-only mode.
 
+You can check my public list on [lastcomm.it/guilro](lastcomm.it/guilro).
+
 Lastcomm.it is free software, and code can be found on [GitHub](https://github.com/guilro/last-commit).
 
 ## Future plans
