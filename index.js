@@ -24,6 +24,14 @@ app.use(bodyParser.json());
 // Serving JS and CSS
 app.use('/', express.static('static'));
 
+app.use('/', wrap(function * (req, res, next) {
+  res.set('cache-control', 'no-cache, no-store, must-revalidate');
+  res.set('pragma', 'no-cache');
+  res.set('expires', '0');
+
+  next();
+}));
+
 // Serving the static HTML only page
 app.get(/^\/[a-zA-Z0-9_]{1,500}$/, wrap(function * (req, res) {
   return res.sendFile(path.join(__dirname, 'static/app.html'));
